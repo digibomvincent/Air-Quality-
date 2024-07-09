@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
+</head>
+
+<body>
+    <script>
+        axios.get('https://data.moenv.gov.tw/api/v2/aqf_p_01?api_key=e8dd42e6-9b8b-43f8-991e-b3dee723a52d&limit=1000&sort=publishtime%20desc&format=JSON')
+            .then(res => {
+                // 獲取到的數據
+                const data = res.data;
+
+                // 處理數據並列出各縣市空氣品質
+                listAirQuality(data);
+            })
+            .catch(err => {
+                console.error("Error fetching data:", err);
+            });
+
+        function listAirQuality(data) {
+            // 檢查數據結構
+            if (data && data.records) {
+                // 使用 `Set` 來儲存唯一的縣市名
+                const cities = new Set();
+
+                data.records.forEach(record => {
+                    // 假設每個記錄都有 `area` 和 `aqi` 字段
+                    const { area, aqi, forecastdate } = record;
+
+                    // 如果 `area` 和 `aqi` 存在，則將其加入 Set
+
+                    cities.add(`${area}:Date= ${forecastdate} AQI = ${aqi}`);
+
+                });
+
+                // 將結果打印出來
+                cities.forEach(city => console.log(city));
+            } else {
+                console.log("Data format is incorrect or empty.");
+            }
+        }
+    </script>
+</body>
+
+</html>
